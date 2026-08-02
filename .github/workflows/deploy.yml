@@ -19,17 +19,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Node.js einrichten
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
       - name: Abhängigkeiten cachen
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -40,13 +40,13 @@ jobs:
         run: npm ci
 
       - name: GitHub Pages konfigurieren
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
 
       - name: Quartz bauen
         run: npx quartz build
 
       - name: Artefakt hochladen
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
@@ -59,4 +59,4 @@ jobs:
     steps:
       - name: Zu GitHub Pages deployen
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
