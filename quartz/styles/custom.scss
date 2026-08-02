@@ -1,0 +1,63 @@
+@use "./base.scss";
+
+/* ── Seitenbreite an Bildschirm anpassen ──────────────────── */
+.page {
+  max-width: clamp(800px, 95vw, 2200px);
+}
+
+.page > #quartz-body {
+  @media all and (min-width: 1200px) {
+    grid-template-columns: 380px auto 380px;
+  }
+}
+
+/* ── Bilder mit Abstand ──────────────────── */
+article img {
+  display: block;
+  margin: 1.5rem auto;
+}
+
+/* ── Callouts ─────────────────────────────── */
+/* Icons ausblenden */
+.callout-icon {
+    display: none;
+}
+
+/* Titel bei Note und Info standardmässig ausblenden */
+.callout[data-callout="note"] .callout-title,
+.callout[data-callout="info"] .callout-title {
+    display: none;
+}
+
+/* Titel einblenden mit: > [!info|titel] Mein Titel */
+.callout[data-callout="note"][data-callout-metadata~="titel"] .callout-title,
+.callout[data-callout="info"][data-callout-metadata~="titel"] .callout-title {
+    display: flex;
+}
+
+/* Handlungssituationen – dezentes Blau */
+.callout[data-callout="example"] {
+    --color: rgb(26, 127, 168);
+    --bg: rgba(26, 127, 168, 0.05);
+    border: none;
+    border-left: 3px solid rgba(26, 127, 168, 0.6);
+    box-shadow: none;
+}
+
+/* Kenntnisse – dezentes Grau */
+.callout[data-callout="info"] {
+    --color: rgb(100, 100, 100);
+    --bg: rgba(0, 0, 0, 0.03);
+    border: none;
+    border-left: 3px solid rgba(0, 0, 0, 0.2);
+    box-shadow: none;
+}
+
+/* Hinweise – dezentes Gelb */
+.callout[data-callout="note"] {
+    --color: rgb(180, 140, 0);
+    --bg: rgba(180, 140, 0, 0.05);
+    border: none;
+    border-left: 3px solid rgba(180, 140, 0, 0.4);
+    box-shadow: none;
+}

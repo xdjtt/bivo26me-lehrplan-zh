@@ -1,0 +1,36 @@
+---
+block: AS3
+lehrjahr: "1"
+semester: "1"
+lektionen_vorgabe: "13"
+leistungsziele:
+  - a4.3
+  - d1.4
+---
+# AS3_Umgang mit Elektrizität
+
+![[AS3.jpg| 300]]
+
+## Handlungssituationen
+
+> [!example|titel] HS1:
+> Beim Arbeiten an einer Abzweigdose entsteht durch fehlerhaftes Verhalten eine Durchströmung. Er kann seine physiologische Reaktion beschreiben.
+
+> [!example|titel] HS2:
+> Sie beobachten wie ein Lernender eine Brandabschottung mit einer Eisenstange durchstösst. Infolge eines Stromschlages, verursacht durch ein verletztes Kabel, stürzt dieser von der Leiter. Sie sind vor Ort, sichern die Unfallstelle und leisten erste Hilfe.
+
+> [!example|titel] HS3:
+> Der Lernende erstellt eine Schwachstrom-Installation (Sonnerie, UKV etc.). Er fragt sich, ist dies eine Schwach- oder Starkstrominstallation.
+
+## Kenntnisse
+
+> [!info]
+> **Leistungsziele:** [[a4.3]], [[d1.4]]
+> - Kennt Körperreaktionen bei verschiedenen Körperströmen und Zeiteinwirkung.
+> - Kennt die Folgen eines Stromschlages im Körper.
+> - Kennt die Massnahmen zur Sicherung der Unfallstelle und Erste-Hilfe-Massnahmen.
+> - Kennt die Definition von Stark- und Schwachstromanlagen gemäss NIN.
+
+## Hinweise
+
+> [!note]
