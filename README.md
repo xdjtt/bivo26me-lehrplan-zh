@@ -1,5 +1,5 @@
 # Link zur Webseite
-https://github.com/xdjtt/bivo26me-lehrplan-zh.git
+https://xdjtt.github.io/bivo26me-lehrplan-zh
 
 # Quartz v4
 
