@@ -7,9 +7,9 @@
 >- Klick auf einen Block zeigt die Handlungssituation und die zugehörigen Leistungsziele.
 
 
-![[blockuebersicht.html|-x-]]    
+![[blockuebersicht.htm|-x-]]    
 
-<iframe src="_Bilder/blockuebersicht.html" style="width:100%; border:none;" onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px';"></iframe>
+<iframe src="_Bilder/blockuebersicht.htm" style="width:100%; border:none;" onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px';"></iframe>
 
 ### 1. Semester
 - [[AS1_Baustelle einrichten]]
