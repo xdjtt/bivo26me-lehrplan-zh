@@ -1,7 +1,7 @@
 # Quartz 4 – Anpassungen und Erweiterungen
 
 Wiederherstellungsreferenz für alle Änderungen am Quartz-Standard.
-Letzte Aktualisierung: Mai 2026
+Letzte Aktualisierung: 03.08.2026
 
 ---
 
@@ -12,7 +12,6 @@ Letzte Aktualisierung: Mai 2026
 | `quartz.layout.ts` | User-Config | ✅ Ja |
 | `quartz/styles/custom.scss` | User-Customization | ✅ Ja |
 | `quartz/static/lightbox.js` | Eigene Datei | ✅ Ja |
-| `quartz/static/svg-lightbox.js` | Eigene Datei | ✅ Ja |
 | `quartz/components/scripts/graph.inline.ts` | Framework-Kern | ⚠️ **Nein – manuell wiederherstellen** |
 
 ---
@@ -48,7 +47,7 @@ Component.ConditionalRender({
 
 ## ✅ 2. `quartz/styles/custom.scss` — Stile
 
-**Was:** Bilder zentriert, Callout-Icons ausgeblendet, drei Callout-Typen mit eigenem Design.
+**Was:** Seitenbreite responsiv (`clamp()`), breitere Desktop-Sidebar, Bilder zentriert, Callout-Icons ausgeblendet, drei Callout-Typen mit eigenem Design, Transclude-Platzhalter der Blockübersicht-Grafik ausgeblendet.
 
 **Verwendung in Markdown:**
 - `> [!example|titel] HS1:` → Handlungssituation (blauer Balken links)
@@ -60,10 +59,29 @@ Component.ConditionalRender({
 ```scss
 @use "./base.scss";
 
-/* ── Bilder zentriert mit Abstand ─────────── */
+/* ── Seitenbreite an Bildschirm anpassen ──────────────────── */
+.page {
+  max-width: clamp(800px, 95vw, 2200px);
+}
+
+.page > #quartz-body {
+  @media all and (min-width: 1200px) {
+    grid-template-columns: 380px auto 380px;
+  }
+}
+
+/* ── Bilder mit Abstand ──────────────────── */
 article img {
   display: block;
   margin: 1.5rem auto;
+}
+
+/* ── Obsidian-Plugin-Embed (![[...html]]) auf der Webseite ausblenden ──── */
+/* Quartz kennt .html nicht als Bild-Embed und rendert stattdessen einen
+   Transclude-Blockquote-Platzhalter. Die echte Grafik kommt hier aus dem
+   separaten <iframe>, das direkt darunter in derselben Datei steht. */
+blockquote.transclude[data-url*="blockuebersicht"] {
+  display: none;
 }
 
 /* ── Callout-Icons ausblenden ─────────────── */
@@ -115,7 +133,7 @@ article img {
 
 ## ✅ 3. `quartz/static/lightbox.js` — Lightbox für normale Bilder
 
-**Was:** Klick auf ein Bild (kein SVG) öffnet es in einem dunklen Overlay. SVG-Bilder werden explizit ausgeschlossen, damit kein Doppel-Overlay mit `svg-lightbox.js` entsteht.
+**Was:** Klick auf ein Bild (kein SVG) öffnet es in einem dunklen Overlay. SVG-Bilder sind im Selektor weiterhin ausgeschlossen (Relikt aus der Zeit mit `svg-lightbox.js`, das inzwischen entfernt wurde, da im ME-Vault aktuell keine SVGs mehr vorkommen) — harmlos, aber falls je wieder eine SVG-Grafik eingebunden wird, bekommt sie ohne eigenes Lightbox-Skript kein Klick-Verhalten.
 
 ```javascript
 document.addEventListener("DOMContentLoaded", () => { setupLightbox() })
@@ -150,142 +168,7 @@ function createOverlay() {
 
 ---
 
-## ✅ 4. `quartz/static/svg-lightbox.js` — Lightbox für SVG-Bilder
-
-**Was:** Klick auf ein SVG-Bild öffnet die SVG als Overlay im gleichen Tab (kein neuer Tab). Die SVG wird in einem iframe mit eigenem CSS-Kontext angezeigt — Quartz-CSS beeinflusst die Darstellung nicht.
-
-**Verhalten:**
-- Overlay mit grauem Hintergrund (#d0d0d0), SVG zentriert
-- Lupe-minus-Cursor überall ausserhalb der Links
-- Schliessen: Klick irgendwo (ausser auf Link), Escape-Taste, × oben rechts
-- Block-Links (AS1, ID3 etc.) navigieren die Hauptseite direkt zur Seite
-
-**Technischer Hintergrund:**
-- SVG wird per `fetch` geladen, relative Pfade zu absoluten URLs umgeschrieben
-- iframe isoliert die SVG vom Quartz-CSS (verhindert Textüberlauf-Problem)
-- Kommunikation iframe ↔ Hauptseite via `postMessage` (für Schliessen und Navigation)
-- SVG `<a>`-Elemente: `link.getAttribute("href")` statt `link.href` (SVG gibt kein String zurück)
-- Escape wird auf beiden Ebenen abgefangen (iframe + Hauptseite)
-
-**Alternative Version:** `quartz/static/svg-lightbox.js.backup` — öffnet SVG in neuem Tab statt Overlay. Voll funktionsfähig, technisch einfacher. Zum Aktivieren: Inhalt in `svg-lightbox.js` kopieren.
-
-```javascript
-function getSiteBase() {
-  const script = document.querySelector('script[src*="svg-lightbox.js"]')
-  if (!script) return ""
-  const scriptUrl = new URL(script.getAttribute("src"), window.location.href)
-  return scriptUrl.pathname.replace(/\/static\/svg-lightbox\.js$/, "")
-}
-
-function setupSvgLightbox() {
-  document.querySelectorAll('img[src$=".svg"]').forEach(img => {
-    if (img.dataset.svgLightbox) return
-    img.dataset.svgLightbox = "true"
-    img.style.cursor = "zoom-in"
-
-    img.addEventListener("click", async () => {
-      const siteBase = getSiteBase()
-      const origin = window.location.origin
-
-      const response = await fetch(img.src)
-      let svgText = await response.text()
-
-      // Relative hrefs (../path) → absolute für iframe-Kontext
-      svgText = svgText.replace(/href="\.\.\/([^"]+)"/g, `href="${origin}${siteBase}/$1"`)
-
-      const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; background: #d0d0d0;
-               display: flex; justify-content: center; align-items: center;
-               cursor: zoom-out; }
-  svg { max-width: 100%; max-height: 100%; cursor: zoom-out; }
-  a { cursor: pointer; }
-</style>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        const href = link.getAttribute("href")
-        if (href) window.top.postMessage({ type: "svg-navigate", href }, "*")
-      })
-    })
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") window.top.postMessage({ type: "svg-close" }, "*")
-    })
-    document.body.addEventListener("click", () => {
-      window.top.postMessage({ type: "svg-close" }, "*")
-    })
-  })
-<\/script>
-</head>
-<body>${svgText}</body>
-</html>`
-
-      const blob = new Blob([html], { type: "text/html" })
-      const blobUrl = URL.createObjectURL(blob)
-
-      const overlay = document.createElement("div")
-      overlay.style.cssText = `
-        position: fixed; inset: 0; background: #d0d0d0;
-        display: flex; align-items: center; justify-content: center;
-        z-index: 9999; cursor: zoom-out;
-      `
-
-      const iframe = document.createElement("iframe")
-      iframe.style.cssText = "width: 95vw; height: 95vh; border: none;"
-      iframe.src = blobUrl
-      overlay.appendChild(iframe)
-
-      const close = () => {
-        overlay.remove()
-        URL.revokeObjectURL(blobUrl)
-        window.removeEventListener("message", onMessage)
-        document.removeEventListener("keydown", onKeyDown)
-      }
-
-      const onKeyDown = (e) => { if (e.key === "Escape") close() }
-      document.addEventListener("keydown", onKeyDown)
-
-      const onMessage = (e) => {
-        if (e.data?.type === "svg-close") {
-          close()
-        } else if (e.data?.type === "svg-navigate") {
-          close()
-          window.location.href = e.data.href
-        }
-      }
-      window.addEventListener("message", onMessage)
-
-      overlay.addEventListener("click", (e) => { if (e.target === overlay) close() })
-
-      const closeBtn = document.createElement("button")
-      closeBtn.textContent = "×"
-      closeBtn.style.cssText = `
-        position: absolute; top: 1rem; right: 1.5rem;
-        background: none; border: none; font-size: 2rem;
-        cursor: pointer; color: #444; line-height: 1;
-      `
-      closeBtn.addEventListener("click", close)
-      overlay.appendChild(closeBtn)
-
-      document.body.appendChild(overlay)
-    })
-  })
-}
-
-document.addEventListener("DOMContentLoaded", () => { setupSvgLightbox() })
-document.addEventListener("nav", () => { setupSvgLightbox() })
-```
-
----
-
-## ⚠️ 5. `quartz/components/scripts/graph.inline.ts` — Graph-Rendering
+## ⚠️ 4. `quartz/components/scripts/graph.inline.ts` — Graph-Rendering
 
 > **Diese Datei wird bei `npx quartz update` überschrieben.**
 > Nach jedem Update die drei folgenden Stellen manuell wiederherstellen.
@@ -328,40 +211,32 @@ style: {
 
 ---
 
-## SVG-Chronologie — Linkstruktur
+## Blockübersicht 1. Lehrjahr — `_Bilder/blockuebersicht.html`
 
-Die Datei `content/_Bilder/Chronologie_1.Lehrjahr.svg` enthält klickbare Links für AS1–AS4 und ID1–ID5.
+Ersetzt die alte SVG-Chronologie (dieser Abschnitt beschrieb bisher `Chronologie_1.Lehrjahr.svg`, EI-Erbe, wird von ME nicht mehr verwendet). Selbst gebaute, in sich geschlossene HTML/CSS/JS-Datei statt SVG: pro Semester eine Zeile mit proportional breiten Kacheln (Breite = `lektionen_vorgabe`), Hover zeigt Titel + Lektionen in einer festen Infozeile, Klick navigiert direkt zur Blockseite.
 
-**Inkscape-kompatible Struktur** (`<a>` muss `<g>` umschliessen, nicht umgekehrt):
-```xml
-<a
-   href="../01_Lehrjahr/AS1_Baustelle-einrichten,-PSA"
-   id="link-as1">
-  <g id="g5-50" inkscape:label="AS1" transform="...">
-    <rect ... />
-    <text ... />
-  </g>
-</a>
+**Einbindung in `index.md` — zwei Zeilen, je eine pro Plattform:**
+```markdown
+![[blockuebersicht.html|-x-]]
+
+<iframe src="_Bilder/blockuebersicht.html" style="width:100%; border:none;" onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px';"></iframe>
 ```
+- Erste Zeile: nur für Obsidian, via Community-Plugin **„Embed HTML" (mnaoumov, Plugin-ID `obsidian-embed-html`)** — muss zusätzlich zum Installieren unter Community-Plugins aktiv geschaltet werden.
+- Zweite Zeile: nur für Quartz, funktioniert weil `remarkRehype({ allowDangerousHtml: true })` in `quartz/processors/parse.ts` rohes HTML durchreicht. `onload` passt die Höhe automatisch an den echten Inhalt an.
+- Die custom.scss-Regel aus Abschnitt 2 blendet den Transclude-Platzhalter aus, den die erste Zeile auf der Quartz-Seite sonst zusätzlich erzeugen würde (`.html` ist keine von Quartz erkannte Bild-Embed-Endung).
 
-**Pfade als relative URLs** (`../01_Lehrjahr/...`):
-- Funktioniert wenn SVG direkt im Browser geöffnet wird (neuer Tab)
-- Wird von `svg-lightbox.js` zu absoluten URLs umgeschrieben (Blob-Kontext)
-- Kompatibel mit GitHub Pages Unterordner-Deployment
+**Echte Verlinkung:** Ziel-URLs relativ zu `_Bilder/`, abgeleitet aus dem gebauten `public/`-Ordner (z.B. `../1.-Lehrjahr/1.-Semester/AS1_Baustelle-einrichten`). Jede Kachel ein echtes `<a href="..." target="_top">` — `target="_top"` zwingend, sonst navigiert nur der Iframe.
 
-**Achtung — `href` statt `xlink:href`:**
-Inkscapes Hyperlink-Dialog (Objekt → Hyperlink) schreibt standardmässig `xlink:href` (alte SVG-1.1-Syntax aus dem `xlink`-Namensraum). `svg-lightbox.js` erkennt aber nur das moderne `href`-Attribut (Regex-Ersetzung der Pfade UND `link.getAttribute("href")` beim Klick-Handler greifen beide nicht bei `xlink:href`). Folge: Link sieht im XML-Editor korrekt aus, tut aber beim Klick nichts.
+**Stolpersteine:**
+- `content/` im Quartz-Repo ist kein Symlink, sondern eine manuell synchronisierte Kopie — vor jedem lokalen Build geänderte Vault-Dateien manuell nach `content/` kopieren.
+- **CSS Container Queries (`container-type: inline-size`) sind mit dem Obsidian-Plugin inkompatibel** — die Containment-Regel verhindert, dass der Browser die Elementbreite aus dem Inhalt ableiten kann, was die Auto-Grössen-Messung des Plugins zerschiesst. Für responsive Schriftgrössen stattdessen `vw`-basiertes `clamp()`, z.B. `clamp(14px, calc(11.1px + 0.76vw), 19px)`.
+- Quartz' Assets-Emitter entfernt bei `.html`-Dateien die Endung beim Kopieren (`slugifyFilePath` in `quartz/util/path.ts` behandelt `.html` wie `.md`) — funktioniert in der Praxis trotzdem (Dev-Server liefert die Datei auch ohne Endungs-Match korrekt aus). Falls das je bricht: Datei als `.htm` speichern (nicht auf der Strip-Liste).
 
-Fix nach jedem neu erstellten Link in Inkscape:
-1. XML-Editor öffnen (Strg+Umschalt+X), `<a>`-Element auswählen
-2. Attribut `xlink:href` in `href` umbenennen (oder zusätzliches `href`-Attribut mit gleichem Wert anlegen)
-3. Alternativ: vor dem Commit per Suchen/Ersetzen `xlink:href="` → `href="` über die ganze Datei laufen lassen
-
-**Quartz-Slugify-Regeln** (für korrekte URLs):
+**Quartz-Slugify-Regeln** (für korrekte URLs, gilt weiterhin):
 - Leerzeichen → `-`
 - Umlaute bleiben (ä, ö, ü)
 - Klammern bleiben — z.B. `AS4_PSA-(Elektro)`
-- `«»` → entfernt
+- `«»` bleiben erhalten
 
 ---
 
@@ -399,5 +274,4 @@ FROM "" FLATTEN file.lists AS item WHERE contains(item.tags, "todo") -->
 1. `quartz.layout.ts` — Graph-Konfiguration aus Abschnitt 1 prüfen (meist unverändert)
 2. `quartz/styles/custom.scss` — Inhalt aus Abschnitt 2 prüfen (meist unverändert)
 3. `quartz/static/lightbox.js` — Falls überschrieben: Inhalt aus Abschnitt 3 einfügen
-4. `quartz/static/svg-lightbox.js` — Falls überschrieben: Inhalt aus Abschnitt 4 einfügen
-5. `quartz/components/scripts/graph.inline.ts` — **Die drei Änderungen A, B, C aus Abschnitt 5 manuell einpflegen**
+4. `quartz/components/scripts/graph.inline.ts` — **Die drei Änderungen A, B, C aus Abschnitt 4 manuell einpflegen**

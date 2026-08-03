@@ -17,6 +17,14 @@ article img {
   margin: 1.5rem auto;
 }
 
+/* ── Obsidian-Plugin-Embed (![[...html]]) auf der Webseite ausblenden ──── */
+/* Quartz kennt .html nicht als Bild-Embed und rendert stattdessen einen
+   Transclude-Blockquote-Platzhalter. Die echte Grafik kommt hier aus dem
+   separaten <iframe>, das direkt darunter in derselben Datei steht. */
+blockquote.transclude[data-url*="blockuebersicht"] {
+  display: none;
+}
+
 /* ── Callouts ─────────────────────────────── */
 /* Icons ausblenden */
 .callout-icon {

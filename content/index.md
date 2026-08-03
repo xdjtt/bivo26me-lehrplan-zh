@@ -3,10 +3,14 @@
 ## Chronologie
 
 > [!note] Hinweise
->- Die empfohlene Anzahl an Lektionen erscheint oberhalb des jeweiligen Blocktitels.
->- Die Grafik des Semesterplans ist noch nicht erstellt
+>- Die Breite eines Blocks entspricht seinen zugeteilten Lektionen.
+>- Klick auf einen Block zeigt die Handlungssituation und die zugehörigen Leistungsziele.
 
-![[Chronologie_1.Lehrjahr V3.svg]]
+
+![[blockuebersicht.html|-x-]]    
+
+<iframe src="_Bilder/blockuebersicht.html" style="width:100%; border:none;" onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px';"></iframe>
+
 ### 1. Semester
 - [[AS1_Baustelle einrichten]]
 - [[AS2_Abfälle und Gefahrenstoffe]]

@@ -99,7 +99,6 @@ export default (() => {
           }
         })}
         <script src={`${baseDir}/static/lightbox.js`} defer></script>
-        <script src={`${baseDir}/static/svg-lightbox.js`}></script>
       </head>
     )
   }

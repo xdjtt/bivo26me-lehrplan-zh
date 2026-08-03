@@ -1,0 +1,320 @@
+<title>1. Lehrjahr auf einen Blick — Blockübersicht ME</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --page:        #f4f5f3;
+    --surface:     #fcfcfb;
+    --surface-2:   #eceeec;
+    --ink:         #1c2024;
+    --ink-2:       #565b60;
+    --ink-muted:   #8a8f93;
+    --hairline:    rgba(11,15,20,0.10);
+    --grid:        #dfe1de;
+    --as:          #b85c2e;
+    --id:          #0e7fae;
+    --on-fill:     #ffffff;
+    --focus:       #0e7fae;
+    --shadow:      0 1px 2px rgba(20,24,29,0.06), 0 6px 16px rgba(20,24,29,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --page:      #14181d;
+      --surface:   #1b2027;
+      --surface-2: #20262d;
+      --ink:       #f2f3f1;
+      --ink-2:     #a9aeb2;
+      --ink-muted: #6f757a;
+      --hairline:  rgba(255,255,255,0.10);
+      --grid:      #2a2f35;
+      --as:        #ce7038;
+      --id:        #2e93c2;
+      --on-fill:   #14181d;
+      --focus:     #4fb2e6;
+      --shadow:    0 1px 2px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --page:      #14181d;
+    --surface:   #1b2027;
+    --surface-2: #20262d;
+    --ink:       #f2f3f1;
+    --ink-2:     #a9aeb2;
+    --ink-muted: #6f757a;
+    --hairline:  rgba(255,255,255,0.10);
+    --grid:      #2a2f35;
+    --as:        #ce7038;
+    --id:        #2e93c2;
+    --on-fill:   #14181d;
+    --focus:     #4fb2e6;
+    --shadow:    0 1px 2px rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"] .viz-root {
+    color-scheme: light;
+    --page:        #f4f5f3;
+    --surface:     #fcfcfb;
+    --surface-2:   #eceeec;
+    --ink:         #1c2024;
+    --ink-2:       #565b60;
+    --ink-muted:   #8a8f93;
+    --hairline:    rgba(11,15,20,0.10);
+    --grid:        #dfe1de;
+    --as:          #b85c2e;
+    --id:          #0e7fae;
+    --on-fill:     #ffffff;
+    --focus:       #0e7fae;
+    --shadow:      0 1px 2px rgba(20,24,29,0.06), 0 6px 16px rgba(20,24,29,0.07);
+  }
+
+  .viz-root {
+    --font-display: "Bahnschrift", "Bahnschrift SemiCondensed", "Arial Narrow", sans-serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: "Consolas", "Cascadia Mono", "SFMono-Regular", Menlo, monospace;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-body);
+    padding: clamp(20px, 4vw, 56px);
+    max-width: 1040px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .viz-root * { box-sizing: border-box; }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 18px;
+    font-size: clamp(14px, calc(11.1px + 0.76vw), 19px);
+    color: var(--ink-2);
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .swatch.as { background: var(--as); }
+  .swatch.id { background: var(--id); }
+
+  .lane-section { margin-bottom: 26px; }
+  .lane-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .lane-head h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(16px, calc(13.1px + 0.76vw), 21px);
+    margin: 0;
+  }
+  .lane-meta {
+    font-family: var(--font-mono);
+    font-size: clamp(12px, calc(9.7px + 0.61vw), 16px);
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .lane-scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin: 0 -2px;
+  }
+  .lane {
+    display: flex;
+    gap: 2px;
+    min-height: 84px;
+  }
+  .block {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    flex-basis: 0;
+    min-width: 92px;
+    --fill: var(--as);
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--fill) 80%, white 20%) 0%,
+        color-mix(in oklab, var(--fill) 92%, black 8%) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.28),
+      inset 0 -6px 10px -6px rgba(0,0,0,0.18),
+      0 1px 2px rgba(15,18,22,0.14),
+      0 5px 12px rgba(15,18,22,0.10);
+    color: var(--on-fill);
+    font-family: var(--font-body);
+    text-align: left;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .block { transition: none; }
+  }
+  .block.cat-id { --fill: var(--id); }
+  .block:first-child { border-radius: 6px 0 0 6px; }
+  .block:last-child { border-radius: 0 6px 6px 0; }
+  .lane .block:only-child { border-radius: 6px; }
+  .block:hover {
+    filter: brightness(1.04);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.32),
+      inset 0 -6px 10px -6px rgba(0,0,0,0.18),
+      0 10px 18px rgba(15,18,22,0.20);
+  }
+  .block:active { transform: translateY(-1px); }
+  .block:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -3px;
+    filter: brightness(1.1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .block:hover { transform: none; }
+  }
+  .block .code {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(14px, calc(11.1px + 0.76vw), 19px);
+    letter-spacing: 0.01em;
+  }
+  .block .hours {
+    font-family: var(--font-mono);
+    font-size: clamp(12px, calc(9.7px + 0.61vw), 16px);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.9;
+  }
+
+  .hover-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    min-height: 54px;
+    margin-bottom: 18px;
+    padding: 10px 16px;
+    background: var(--surface-2);
+    border-radius: 8px;
+  }
+  .hover-info .hi-title {
+    font-size: clamp(18px, calc(14.5px + 0.91vw), 24px);
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+  .hover-info.active .hi-title { color: var(--ink); }
+  .hover-info .hi-hours {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, calc(11.1px + 0.76vw), 19px);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-2);
+  }
+
+</style>
+
+<div class="viz-root">
+  <div class="legend" role="group" aria-label="Kategorien">
+    <span class="legend-item"><span class="swatch as"></span>AS: Arbeitssicherheit</span>
+    <span class="legend-item"><span class="swatch id"></span>ID: Installation und Dokumentation</span>
+  </div>
+
+  <div class="hover-info" id="hoverInfo" aria-live="polite">
+    <span class="hi-title">Fahre über einen Block für Details</span>
+  </div>
+
+  <section class="lane-section" aria-labelledby="sem1-h">
+    <div class="lane-head">
+      <h2 id="sem1-h">1. Semester</h2>
+      <span class="lane-meta">100 Lektionen</span>
+    </div>
+    <div class="lane-scroll"><div class="lane" id="lane-1" role="list"></div></div>
+  </section>
+
+  <section class="lane-section" aria-labelledby="sem2-h">
+    <div class="lane-head">
+      <h2 id="sem2-h">2. Semester</h2>
+      <span class="lane-meta">100 Lektionen</span>
+    </div>
+    <div class="lane-scroll"><div class="lane" id="lane-2" role="list"></div></div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var blocks = [
+    { code: "AS1", title: "Baustelle einrichten", sem: 1, cat: "as", hours: 12,
+      url: "../1.-Lehrjahr/1.-Semester/AS1_Baustelle-einrichten" },
+    { code: "AS2", title: "Abfälle und Gefahrenstoffe", sem: 1, cat: "as", hours: 10,
+      url: "../1.-Lehrjahr/1.-Semester/AS2_Abfälle-und-Gefahrenstoffe" },
+    { code: "AS3", title: "Umgang mit Elektrizität", sem: 1, cat: "as", hours: 13,
+      url: "../1.-Lehrjahr/1.-Semester/AS3_Umgang-mit-Elektrizität" },
+    { code: "AS4", title: "PSA (Elektro)", sem: 1, cat: "as", hours: 8,
+      url: "../1.-Lehrjahr/1.-Semester/AS4_PSA-(Elektro)" },
+    { code: "ID1", title: "Lampenschaltung im Kellerraum", sem: 1, cat: "id", hours: 11,
+      url: "../1.-Lehrjahr/1.-Semester/ID1_Lampenschaltung-im-Kellerraum" },
+    { code: "ID2", title: "Verlegen eines Erders", sem: 1, cat: "id", hours: 15,
+      url: "../1.-Lehrjahr/1.-Semester/ID2_Verlegen-eines-Erders" },
+    { code: "ID3", title: "Potenzialausgleich", sem: 1, cat: "id", hours: 12,
+      url: "../1.-Lehrjahr/1.-Semester/ID3_Potenzialausgleich" },
+    { code: "ID4", title: "EFH Treppenhaus UG/EG", sem: 1, cat: "id", hours: 11,
+      url: "../1.-Lehrjahr/1.-Semester/ID4_EFH_Treppenhaus-UG_EG" },
+    { code: "ID5", title: "Einphasige Beleuchtungsinstallationen im Wohnbereich", sem: 1, cat: "id", hours: 8,
+      url: "../1.-Lehrjahr/1.-Semester/ID5_Einphasige-Beleuchtungsinstallationen-im-Wohnbereich" },
+    { code: "ID6", title: "Technikraum erschliessen", sem: 2, cat: "id", hours: 25,
+      url: "../1.-Lehrjahr/2.Semester/ID06_Technikraum-erschliessen" },
+    { code: "ID7", title: "Küchenumbau", sem: 2, cat: "id", hours: 25,
+      url: "../1.-Lehrjahr/2.Semester/ID07_Küchenumbau" },
+    { code: "ID8", title: "Konventionelle Sonnerieanlage", sem: 2, cat: "id", hours: 18,
+      url: "../1.-Lehrjahr/2.Semester/ID08_Konventionelle-Sonnerieanlage" },
+    { code: "ID9", title: "Serviceauftrag", sem: 2, cat: "id", hours: 17,
+      url: "../1.-Lehrjahr/2.Semester/ID09_Serviceauftrag" },
+    { code: "ID10", title: "Wohnungsteil planen und einlegen", sem: 2, cat: "id", hours: 15,
+      url: "../1.-Lehrjahr/2.Semester/ID10_Wohnungsteil-planen-und-einlegen" }
+  ];
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  var lane1 = document.getElementById("lane-1");
+  var lane2 = document.getElementById("lane-2");
+
+  blocks.forEach(function (b) {
+    var link = el("a", "block" + (b.cat === "id" ? " cat-id" : ""));
+    link.href = b.url;
+    link.target = "_top";
+    link.style.flexGrow = b.hours;
+    var code = el("span", "code", b.code);
+    var hours = el("span", "hours", b.hours + " Lekt.");
+    link.appendChild(code);
+    link.appendChild(hours);
+    link.addEventListener("mouseenter", function () { showHoverInfo(b); });
+    link.addEventListener("mouseleave", resetHoverInfo);
+    link.addEventListener("focus", function () { showHoverInfo(b); });
+    link.addEventListener("blur", resetHoverInfo);
+    (b.sem === 1 ? lane1 : lane2).appendChild(link);
+  });
+
+  var hoverInfo = document.getElementById("hoverInfo");
+  var HOVER_PLACEHOLDER = "Fahre über einen Block für Details";
+  function showHoverInfo(b) {
+    hoverInfo.classList.add("active");
+    hoverInfo.innerHTML = "";
+    hoverInfo.appendChild(el("span", "hi-title", b.code + ": " + b.title));
+    hoverInfo.appendChild(el("span", "hi-hours", b.hours + " Lektionen"));
+  }
+  function resetHoverInfo() {
+    hoverInfo.classList.remove("active");
+    hoverInfo.innerHTML = "";
+    hoverInfo.appendChild(el("span", "hi-title", HOVER_PLACEHOLDER));
+  }
+})();
+</script>
